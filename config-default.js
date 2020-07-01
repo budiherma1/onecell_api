@@ -3,7 +3,7 @@ const user = 'averoaco_one'
 const password = ''
 const database = 'averoaco_one'
 
-export default{
+module.exports ={
     host: host,
     user: user,
     password: password,
