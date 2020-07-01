@@ -1,13 +1,14 @@
 const express = require('express')
 const app = express()
 const port = 3000
+const config = require('./config')
 
 var mysql = require('mysql')
 var connection = mysql.createConnection({
-  host: '103.146.203.15',
-  user: 'averoaco_one',
-  password: 'nananina17',
-  database: 'averoaco_one'
+  host: config.host,
+  user: config.user,
+  password: config.password,
+  database: config.database
 })
 
 // connection.connect()
