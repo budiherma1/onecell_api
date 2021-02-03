@@ -195,13 +195,13 @@ app.post('/login', jsonParser, (req, res) => {
     var username = req.body.username
     var password = req.body.password
     connection.query(
-        `SELECT * FROM averoaco_one.users a
+        `SELECT * FROM users a
         left join (
         SELECT config_id, config, value, note, group_id, status, created_by, created_at, updated_at, 
         group_concat(if(config = 'target_penjualan_nett', value, null)) as target_penjualan_nett,
         group_concat(if(config = 'target_penjualan_bruto', value, null)) as target_penjualan_bruto,
         group_concat(if(config = 'shop_name', value, null)) as shop_name 
-        FROM averoaco_one.config
+        FROM config
         where status = 1
         ) b on a.group_id = b.group_id
         
@@ -227,7 +227,7 @@ app.post('/status-target', jsonParser, (req, res) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var group_id = req.body.group_id
     connection.query(
-        `SELECT sum(price) as total FROM averoaco_one.penjualan
+        `SELECT sum(price) as total FROM penjualan
         where status = 1
         and group_id = ${group_id}
         and (is_pulsa = 0 || is_pulsa is null)
@@ -247,7 +247,7 @@ app.post('/uang-aksesoris', jsonParser, (req, res) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var group_id = req.body.group_id
     connection.query(
-        `SELECT sum(price) as total FROM averoaco_one.penjualan
+        `SELECT sum(price) as total FROM penjualan
         where status = 1
         and group_id = ${group_id}
         and is_stored = 0
@@ -271,7 +271,7 @@ app.post('/uang-pulsa', jsonParser, (req, res) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var group_id = req.body.group_id
     connection.query(
-        `SELECT sum(price) as total FROM averoaco_one.penjualan
+        `SELECT sum(price) as total FROM penjualan
         where status = 1
         and group_id = ${group_id}
         and is_stored = 0
@@ -297,7 +297,7 @@ app.post('/penjualan-per-hari', jsonParser, (req, res) => {
     connection.query(
         `SELECT group_id,
         sum(price) as total, DATE_FORMAT(created_at,'%Y-%m-%d') as date
-         FROM averoaco_one.penjualan
+         FROM penjualan
          where group_id = ${group_id}
          and status = 1
          and (is_pulsa = 0 || is_pulsa is null)
@@ -323,7 +323,7 @@ app.post('/top-product', jsonParser, (req, res) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var group_id = req.body.group_id
     connection.query(
-        `SELECT product, product_id, count(penjualan_id) as total FROM averoaco_one.penjualan
+        `SELECT product, product_id, count(penjualan_id) as total FROM penjualan
         where status = 1
         and group_id = ${group_id}
         and (is_pulsa = 0 || is_pulsa is null)
@@ -348,7 +348,7 @@ app.get('/product-type', jsonParser, (req, res) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var group_id = req.body.group_id
     connection.query(
-        `SELECT * FROM averoaco_one.products
+        `SELECT * FROM products
         where status = 1
         and group_id = ${group_id}`
         , function (err, rows, fields) {
@@ -392,7 +392,7 @@ app.post('/penjualan-hari-ini', jsonParser, (req, res) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var group_id = req.body.group_id
     connection.query(
-        `SELECT penjualan_id, product, product_id, price, note, status, is_pulsa, group_id, is_stored, created_by, date_format(created_at, '%H:%i') as created_at, updated_at FROM averoaco_one.penjualan
+        `SELECT penjualan_id, product, product_id, price, note, status, is_pulsa, group_id, is_stored, created_by, date_format(created_at, '%H:%i') as created_at, updated_at FROM penjualan
         where status = 1
         and group_id = ${group_id}
         -- and (is_pulsa = 0 || is_pulsa is null)
@@ -414,7 +414,7 @@ app.post('/penjualan-bulan-ini', jsonParser, (req, res) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     var group_id = req.body.group_id
     connection.query(
-        `SELECT penjualan_id, product, product_id, price, note, status, is_pulsa, group_id, is_stored, created_by, date_format(created_at, '%d-%m, %H:%i') as created_at, updated_at FROM averoaco_one.penjualan
+        `SELECT penjualan_id, product, product_id, price, note, status, is_pulsa, group_id, is_stored, created_by, date_format(created_at, '%d-%m, %H:%i') as created_at, updated_at FROM penjualan
         where status = 1
         and group_id = ${group_id}
         -- and (is_pulsa = 0 || is_pulsa is null)
@@ -462,7 +462,7 @@ app.post('/laba-total', jsonParser, (req, res) => {
         `SELECT 
         sum(price-harga_beli) as total 
         -- penjualan_id, product, product_id, price, note, status, is_pulsa, harga_beli, group_id, is_stored, created_by, created_at, updated_at, price-harga_beli as aa
-        FROM averoaco_one.penjualan
+        FROM penjualan
                 where status = 1
                 and group_id = ${group_id}
                 -- and (is_pulsa = 0 || is_pulsa is null)
@@ -486,7 +486,7 @@ app.post('/laba-aksesoris', jsonParser, (req, res) => {
         `SELECT 
         sum(price-harga_beli) as total 
         -- penjualan_id, product, product_id, price, note, status, is_pulsa, harga_beli, group_id, is_stored, created_by, created_at, updated_at, price-harga_beli as aa
-        FROM averoaco_one.penjualan
+        FROM penjualan
                 where status = 1
                 and group_id = ${group_id}
                 and (is_pulsa = 0 || is_pulsa is null)
@@ -510,7 +510,7 @@ app.post('/laba-pulsa', jsonParser, (req, res) => {
         `SELECT 
         sum(price-harga_beli) as total 
         -- penjualan_id, product, product_id, price, note, status, is_pulsa, harga_beli, group_id, is_stored, created_by, created_at, updated_at, price-harga_beli as aa
-        FROM averoaco_one.penjualan
+        FROM penjualan
                 where status = 1
                 and group_id = ${group_id}
                 -- and (is_pulsa = 0 || is_pulsa is null)
